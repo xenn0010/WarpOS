@@ -1,0 +1,9 @@
+{
+  "name": "@local/replit-application",
+  "version": "1.0.0",
+  "description": "Replit Online IDE for OS.js",
+  "main": "dist/main.js",
+  "osjs": {
+    "type": "package"
+  }
+}

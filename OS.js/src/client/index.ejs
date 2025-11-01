@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+    OS.js - Copyright (c) 2011-2020
+    Anders Evenrud (andersevenrud@gmail.com)
+    https://github.com/os-js/
+    -->
+    <meta name="google" content="notranslate" />
+    <meta name="description" content="WarpOS - Modern JavaScript Cloud/Web Desktop Platform" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="color-scheme" content="dark" />
+    
+    <!-- Preconnect to external resources for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WarpOS - Modern Web Desktop" />
+    <meta property="og:description" content="A modern, feature-rich web desktop environment" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    
+    <!-- Prevent flash of unstyled content -->
+    <style>
+      body {
+        background: #ffffff;
+        color: #1a1a1a;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      }
+      
+      /* Hide any OS.js loading text or messages */
+      .osjs-loading,
+      .osjs-loader,
+      [class*="loading"],
+      [class*="Loading"] {
+        display: none !important;
+        visibility: hidden !important;
+      }
+      .warp-splash {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: #ffffff;
+        z-index: 10000;
+      }
+      .warp-splash-animation {
+        width: min(400px, 60vw);
+        height: min(400px, 60vw);
+      }
+      .warp-lottie-bg {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(500px, 70vw);
+        height: min(500px, 70vw);
+        z-index: 100;
+        pointer-events: auto;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .warp-lottie-bg:hover {
+        transform: translate(-50%, -50%) scale(1.05);
+        filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
+      }
+      .warp-lottie-bg-animation {
+        width: 100%;
+        height: 100%;
+      }
+      .warp-agentic-overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(600px, 85vw);
+        max-height: 400px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: saturate(180%) blur(40px);
+        -webkit-backdrop-filter: saturate(180%) blur(40px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
+                    0 8px 24px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        padding: 32px;
+        display: none;
+        z-index: 200;
+        pointer-events: auto;
+      }
+      .warp-agentic-overlay.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- macOS Menu Bar -->
+    <div id="warp-menu-bar" class="warp-menu-bar" style="display: none;">
+      <div class="warp-menu-bar-left">
+        <div class="warp-menu-apple">🍎</div>
+        <div class="warp-menu-item">WarpOS</div>
+        <div class="warp-menu-item">File</div>
+        <div class="warp-menu-item">Edit</div>
+        <div class="warp-menu-item">View</div>
+        <div class="warp-menu-item">Go</div>
+        <div class="warp-menu-item">Window</div>
+        <div class="warp-menu-item">Help</div>
+      </div>
+      <div class="warp-menu-bar-right">
+        <div class="warp-menu-time" id="warp-menu-time"></div>
+      </div>
+    </div>
+
+    <!-- Desktop Container -->
+    <div id="warp-desktop" class="warp-desktop" style="display: none;">
+      <!-- Desktop icons container (hidden by default) -->
+      <div id="warp-desktop-icons" class="warp-desktop-icons" style="display: none;"></div>
+    </div>
+
+    <!-- macOS Dock -->
+    <div id="warp-dock" class="warp-dock" style="display: none;">
+      <div class="warp-dock-container">
+        <div class="warp-dock-separator"></div>
+      </div>
+    </div>
+
+    <!-- Lottie splash (transitions to background) -->
+    <div id="warp-splash" class="warp-splash">
+      <div class="warp-splash-animation"></div>
+    </div>
+    
+    <!-- Lottie center animation (agentic interface) -->
+    <div id="warp-lottie-bg" class="warp-lottie-bg" style="display: none;">
+      <div class="warp-lottie-bg-animation"></div>
+    </div>
+    
+    <!-- Agentic Interface Overlay -->
+    <div id="warp-agentic-overlay" class="warp-agentic-overlay">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 600; color: #1a1a1a;">Agentic Interface</h2>
+        <p style="margin: 0; font-size: 14px; color: #666;">How can I help you today?</p>
+      </div>
+      <div id="warp-agentic-input" style="display: flex; gap: 12px; align-items: center;">
+        <input type="text" placeholder="Ask me anything..." style="flex: 1; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; font-size: 14px; background: rgba(255,255,255,0.8);" />
+        <button style="padding: 12px 24px; background: #007AFF; color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer;">Send</button>
+      </div>
+    </div>
+    
+    <!-- Audio element for startup sound -->
+    <audio id="warp-start-sound" preload="auto">
+      <source src="./assets/start.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+      // Play startup sound immediately on page load - very aggressive
+      (function() {
+        let audioPlayed = false;
+        const playAudio = () => {
+          if (audioPlayed) return;
+          const audio = document.getElementById('warp-start-sound');
+          if (!audio) return;
+          
+          audio.volume = 0.7;
+          audio.currentTime = 0;
+          
+          const play = () => {
+            if (audioPlayed) return;
+            const promise = audio.play();
+            if (promise) {
+              promise.then(() => {
+                audioPlayed = true;
+                console.log('Startup sound played');
+              }).catch(() => {
+                // Autoplay blocked - will try on interaction
+              });
+            }
+          };
+          
+          // Try immediately
+          if (audio.readyState >= 2) {
+            play();
+          } else {
+            audio.load();
+            audio.addEventListener('canplaythrough', play, { once: true });
+            audio.addEventListener('canplay', play, { once: true });
+            audio.addEventListener('loadeddata', play, { once: true });
+          }
+          
+          // Force play after a short delay
+          setTimeout(play, 50);
+          setTimeout(play, 200);
+        };
+        
+        // Try immediately and multiple times
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          playAudio();
+        } else {
+          document.addEventListener('DOMContentLoaded', playAudio);
+        }
+        
+        setTimeout(playAudio, 100);
+        setTimeout(playAudio, 300);
+        setTimeout(playAudio, 500);
+        setTimeout(playAudio, 1000);
+        
+        // On any interaction
+        ['click', 'mousemove', 'keydown', 'touchstart', 'mousedown'].forEach(event => {
+          document.addEventListener(event, playAudio, { once: true, passive: true });
+        });
+      })();
+    </script>
+  </body>
+</html>

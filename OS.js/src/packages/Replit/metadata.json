@@ -1,0 +1,14 @@
+{
+  "name": "Replit",
+  "category": "development",
+  "icon": "icon.png",
+  "title": {
+    "en_EN": "Replit"
+  },
+  "description": {
+    "en_EN": "Replit Online IDE"
+  },
+  "files": [
+    "main.js"
+  ]
+}

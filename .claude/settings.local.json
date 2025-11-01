@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(npm install:*)",
+      "Bash(NODE_OPTIONS=--openssl-legacy-provider npm run build:*)",
+      "Bash(NODE_OPTIONS=--openssl-legacy-provider npm run serve:*)",
+      "Bash(npm run build:manifest:*)",
+      "Bash(npm run make:iframe-application:*)",
+      "Bash(mkdir:*)",
+      "Bash(NODE_OPTIONS=--openssl-legacy-provider npx webpack:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "WebSearch",
+      "WebFetch(domain:composio.dev)",
+      "Bash(npx convex:*)",
+      "Bash(find:*)",
+      "Bash(test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
