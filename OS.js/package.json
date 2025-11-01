@@ -48,8 +48,11 @@
     "@osjs/settings-application": "^1.1.8",
     "@osjs/standard-theme": "^4.0.9",
     "@osjs/textpad-application": "^1.2.7",
+    "dotenv": "^16.6.1",
     "hyperapp": "^1.2.10",
+    "livekit-server-sdk": "^2.14.0",
     "lottie-web": "^5.12.2",
+    "node-fetch": "^2.7.0",
     "typeface-roboto": "0.0.75"
   },
   "repository": {

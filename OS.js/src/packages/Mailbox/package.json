@@ -1,0 +1,10 @@
+{
+  "name": "@local/mailbox-application",
+  "version": "1.0.0",
+  "description": "Mailbox application for OS.js",
+  "main": "dist/main.js",
+  "osjs": {
+    "type": "package"
+  }
+}
+

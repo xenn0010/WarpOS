@@ -38,6 +38,9 @@
 // https://manual.os-js.org/resource/official/
 //
 
+// Load environment variables
+require('dotenv').config();
+
 const {
   Core,
   CoreServiceProvider,
@@ -55,6 +58,78 @@ osjs.register(PackageServiceProvider);
 osjs.register(VFSServiceProvider);
 osjs.register(AuthServiceProvider);
 osjs.register(SettingsServiceProvider);
+
+// Voice Agent Service Provider
+class VoiceAgentServiceProvider {
+  constructor(core, options) {
+    this.core = core;
+  }
+
+  provides() {
+    return ['osjs/voice-agent-routes'];
+  }
+
+  async init() {
+    const {app} = this.core;
+
+    // Serve LiveKit client library
+    app.use('/voice-agent', require('express').static(require('path').join(__dirname, '../../../LiveKit/public')));
+
+    // Generate LiveKit access token
+    app.post('/api/voice-agent/token', async (req, res) => {
+      try {
+        const {AccessToken} = require('livekit-server-sdk');
+        const {roomName, participantName} = req.body;
+
+        if (!roomName || !participantName) {
+          return res.status(400).json({error: 'roomName and participantName required'});
+        }
+
+        const at = new AccessToken(
+          process.env.LIVEKIT_API_KEY,
+          process.env.LIVEKIT_API_SECRET,
+          {
+            identity: participantName,
+            name: participantName,
+          }
+        );
+
+        at.addGrant({
+          room: roomName,
+          roomJoin: true,
+          canPublish: true,
+          canSubscribe: true,
+        });
+
+        const token = await at.toJwt();
+
+        res.json({
+          token,
+          url: process.env.LIVEKIT_URL,
+        });
+      } catch (error) {
+        console.error('Error generating LiveKit token:', error);
+        res.status(500).json({error: 'Failed to generate token'});
+      }
+    });
+
+    // Get OpenAI API key
+    app.get('/api/voice-agent/openai-key', (req, res) => {
+      res.json({
+        key: process.env.OPENAI_API_KEY,
+      });
+    });
+
+    // Get ElevenLabs API key
+    app.get('/api/voice-agent/elevenlabs-key', (req, res) => {
+      res.json({
+        key: process.env.ELEVENLABS_API_KEY,
+      });
+    });
+  }
+}
+
+osjs.register(VoiceAgentServiceProvider);
 
 const shutdown = signal => (error) => {
   if (error instanceof Error) {
