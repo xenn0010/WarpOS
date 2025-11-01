@@ -241,7 +241,8 @@ const init = () => {
           { names: ['FileManager', 'filemanager', 'File Manager', '@osjs/filemanager-application'], displayName: 'Files', icon: '📁' },
           { names: ['Settings', 'settings', 'OS.js Settings', '@osjs/settings-application', 'SettingsApplication'], displayName: 'Settings', icon: '⚙️' },
           { names: ['Calculator', 'calculator', '@osjs/calculator-application'], displayName: 'Calculator', icon: '🔢' },
-          { names: ['TextPad', 'textpad', 'Text Editor', '@osjs/textpad-application'], displayName: 'Text Editor', icon: '📝' }
+          { names: ['TextPad', 'textpad', 'Text Editor', '@osjs/textpad-application'], displayName: 'Text Editor', icon: '📝' },
+          { names: ['Mailbox', 'mailbox', '@local/mailbox-application'], displayName: 'Mailbox', icon: '📧' }
         ];
 
         // Find and add apps
@@ -287,17 +288,10 @@ const init = () => {
             
             iconEl.addEventListener('click', async () => {
               try {
-                // Try to launch the application
-                const application = osjs.make('osjs/application');
-                await application.create(appNameToUse);
+                // Launch the application using the correct OS.js API
+                await osjs.run(appNameToUse);
               } catch (err) {
                 console.error('Error launching app:', err);
-                // Try alternative approach
-                try {
-                  osjs.make('osjs/application', appNameToUse);
-                } catch (err2) {
-                  console.error('Alternative launch failed:', err2);
-                }
               }
             });
             

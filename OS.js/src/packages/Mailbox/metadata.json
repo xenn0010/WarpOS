@@ -1,0 +1,15 @@
+{
+  "name": "Mailbox",
+  "category": "productivity",
+  "icon": "📧",
+  "title": {
+    "en_EN": "Mailbox"
+  },
+  "description": {
+    "en_EN": "Email inbox viewer"
+  },
+  "files": [
+    "main.js"
+  ]
+}
+
