@@ -39,6 +39,9 @@ Thumbs.db
 *.temp
 .cache/
 
+# User data (local warp_data partition)
+warp_data/
+
 # Claude settings (optional - uncomment if you want to exclude)
 # .claude/
 
