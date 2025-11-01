@@ -138,6 +138,23 @@ module.exports = {
           create: false,
           delete: false
         }
+      },
+      {
+        // Local warp_data folder mount point
+        name: 'warp_data',
+        label: 'Warp Data',
+        adapter: 'local',
+        attributes: {
+          // Points to warp_data folder in the same directory where WarpOS is launched
+          root: path.resolve(process.cwd(), 'warp_data')
+        },
+        permissions: {
+          read: true,
+          write: true,
+          execute: false,
+          create: true,
+          delete: true
+        }
       }
     ],
     
